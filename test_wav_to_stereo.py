@@ -8,13 +8,25 @@ mono_audio = mono_audio.astype(np.float32) / 32767.0
 
 # 2. Important parameters
 c = 343.0                           # Speed of sound (m/s)
-d = 0.50                            # Underlying distance between 2 sensors (m)
-angle_deg = 45.0                    # Angle of source in degrees (0 = in front, 90 = right, -90 left)
-angle_rad = np.radians(angle_deg)   # Angle converted to radians
+# d = 0.50                            # Underlying distance between 2 sensors (m)
+# angle_deg = 45.0                    # Angle of source in degrees (0 = in front, 90 = right, -90 left)
+# angle_rad = np.radians(angle_deg)   # Angle converted to radians
+
+s1_pos = np.array([0.0, 0.0])       # sensor 1 position
+s2_pos = np.array([0.5, 0.0])       # sensor 2 position (0.5m difference x-as)
+source_pos = np.array([2.0, 1.0])   # source position
+
+distance_a = np.linalg.norm(source_pos - s1_pos) # distance s1 to source
+distance_b = np.linalg.norm(source_pos - s2_pos) # distance s2 to source
+
+decay_a = 1.0 / distance_a**2
+decay_b = 1.0 / distance_b**2
 
 # 3. Calculate Time Difference of Arrival
-# Formula: delay = (distance between sensors * sin(angle)) / speed of sound
-time_delay = (d * np.sin(angle_rad)) / c
+
+# Old formula: time_delay = (d * np.sin(angle_rad)) / c
+# New formula: time_delay = (distance between distances to sensors) / c
+time_delay = (distance_a - distance_b) / c
 sample_delay = int(np.round(time_delay * sample_rate)) # TDOA to discrete values
 
 n_samples = len(mono_audio) # 44100 * 2
@@ -27,20 +39,16 @@ right_channel = np.zeros(total_length)
 
 if sample_delay > 0:
     # Source right (left delayed)
-    right_channel[:n_samples] = mono_audio
-    left_channel[sample_delay:n_samples + sample_delay] = mono_audio
-    #right_channel[:n_samples - sample_delay] = mono_audio[sample_delay:]
-    #left_channel = mono_audio
+    right_channel[:n_samples] = mono_audio * decay_b
+    left_channel[sample_delay:n_samples + sample_delay] = mono_audio * decay_a
 elif sample_delay < 0:
     # Source left (right delayed)
     abs_delay = abs(sample_delay)
-    left_channel[:n_samples] = mono_audio
-    right_channel[abs_delay:n_samples + abs_delay] = mono_audio
-    #left_channel[:n_samples - abs_delay] = mono_audio[abs_delay:]
-    #right_channel = mono_audio
+    left_channel[:n_samples] = mono_audio * decay_a
+    right_channel[abs_delay:n_samples + abs_delay] = mono_audio * decay_b
 else:
-    left_channel = mono_audio
-    right_channel = mono_audio
+    left_channel[:n_samples] = mono_audio * decay_a
+    right_channel[:n_samples] = mono_audio * decay_b
 
 # 5. 2D stereo-array
 stereo_audio = np.column_stack((left_channel, right_channel))
