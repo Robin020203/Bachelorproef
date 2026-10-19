@@ -1,11 +1,18 @@
 import numpy as np
 from scipy.io import wavfile
 
-sample_rate = 44100  #Standard sample rate
-t = np.linspace(0, 2, 2 * sample_rate, endpoint=False)  # 2 seconds audio
-audio = np.sin(2 * np.pi * 440 * t) # Generate a tone of 440 Hz (A4)
+# sound settings
+sample_rate = 44100     # Standard sample rate (44100 samples per sec)
+duration = 2            # Seconds audio
+frequency = 440         # 440 Hz (A4 note)
 
-# Transfer to 16-bit PCM
+# Time array
+t = np.linspace(0, duration, duration * sample_rate, endpoint=False)
+
+# Sin wave
+audio = np.sin(2 * np.pi * frequency * t)
+
+# Convert to 16-bit PCM (for WAV file)
 audio_int16 = (audio * 32767).astype(np.int16)
 
 # Save
