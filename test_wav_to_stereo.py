@@ -37,6 +37,11 @@ total_length = n_samples + abs_delay
 left_channel = np.zeros(total_length)
 right_channel = np.zeros(total_length)
 
+# left_delay = max(sample_delay, 0)
+# right_delay = max(-sample_delay, 0)
+# left_channel[left_delay:n_samples + left_delay] = mono_audio * decay_a
+# right_channel[right_delay:n_samples + right_delay] = mono_audio * decay_b
+
 if sample_delay > 0:
     # Source right (left delayed)
     right_channel[:n_samples] = mono_audio * decay_b
