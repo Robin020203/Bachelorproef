@@ -5,7 +5,7 @@ from pydmd import HODMD
 # 1. Read WAV file
 sample_rate, stereo_data = wavfile.read('stereo_test.wav')
 
-# 2. Make an audio matrix (2 rows (channels), 100 timestamps)
+# 2. Make an audio matrix (2 rows (channels), samples)
 
 audio_matrix = stereo_data.astype(np.float32) / 32767.0     # samples, channels(2)
 audio_matrix = audio_matrix.T                               # channels(2), samples
