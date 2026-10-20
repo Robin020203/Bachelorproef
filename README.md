@@ -1,7 +1,7 @@
 PyDMD library:
 
-pip install pydmd
+`pip install pydmd`
 
 DRS library:
 
-pip install git+https://github.com/sthomer/drs.git
+`pip install git+https://github.com/sthomer/drs.git`
