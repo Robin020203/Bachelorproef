@@ -3,7 +3,7 @@ from scipy.io import wavfile
 from pydmd import HODMD
 
 # 1. Read WAV file
-sample_rate, stereo_data = wavfile.read('wav/stereo_test.wav')
+sample_rate, stereo_data = wavfile.read('wav/cello_stereo.wav')
 
 # 2. Make an audio matrix (2 rows (channels), samples)
 
@@ -22,4 +22,4 @@ print(hodmd.modes)
 # 4. Reconstruction of HODMD data
 reconstructed_data = hodmd.reconstructed_data.real
 reconstructed_stereo = (reconstructed_data.T * 32767).astype(np.int16)
-wavfile.write('wav/hodmd_reconstructed.wav', sample_rate, reconstructed_stereo)
+wavfile.write('wav/cello_hodmd_rec.wav', sample_rate, reconstructed_stereo)
