@@ -1,9 +1,9 @@
 import numpy as np
 from scipy.io import wavfile
-from drs.core import drs, reconstruction
+from drs.core import drs, reconstruction #, mirror, resonant_frequency
 
 # 1. Read WAV file
-sample_rate, stereo_data = wavfile.read('stereo_test.wav')
+sample_rate, stereo_data = wavfile.read('wav/stereo_test.wav')
 
 # 2. Make an audio matrix (channels, timestamps)
 
@@ -16,6 +16,7 @@ right_channel = audio_matrix[1]
 # 3. DRS parameters
 window_length = 1024
 
+#drs_slices = drs(audio_matrix, window_length)
 drs_slices_left = drs(left_channel, window_length)
 drs_slices_right = drs(right_channel, window_length)
 
@@ -41,10 +42,24 @@ for slice_item in drs_slices_right:
 # Concatenate all reconstructed right slices
 reconstructed_right = np.concatenate(reconstructed_right_list)
 
+# Reconstruct all slices for channels together
+#reconstructed_list = []
+#for slice_item in drs_slices:
+#    # Returns 4 elements (error)
+#    ds_zs_fwd, ds_zs_rev, _, _ = slice_item
+#    rec_slice = reconstruction(ds_zs_fwd, ds_zs_rev, window_length)
+#    reconstructed_right_list.append(rec_slice)
+
+# Concatenate all reconstructed right slices
+# reconstructed_total = np.concatenate(reconstructed_list)
+
 # Same length
 min_len = min(len(reconstructed_left), len(reconstructed_right))
 reconstructed_audio = np.column_stack((reconstructed_left[:min_len], reconstructed_right[:min_len]))
 
 # 6. 16-bit PCM and save
 stereo_int16 = (reconstructed_audio * 32767).astype(np.int16)
-wavfile.write('drs_reconstructed.wav', sample_rate, stereo_int16)
+wavfile.write('wav/drs_reconstructed_separated.wav', sample_rate, stereo_int16)
+
+#stereo_int16 = (reconstructed_total * 32767).astype(np.int16)
+#wavfile.write('wav/drs_reconstructed_together.wav', sample_rate, stereo_int16)

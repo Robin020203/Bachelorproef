@@ -16,4 +16,4 @@ audio = np.sin(2 * np.pi * frequency * t)
 audio_int16 = (audio * 32767).astype(np.int16)
 
 # Save
-wavfile.write('test.wav', sample_rate, audio_int16)
+wavfile.write('wav/test.wav', sample_rate, audio_int16)

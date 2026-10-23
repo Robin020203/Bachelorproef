@@ -2,7 +2,7 @@ import numpy as np
 from scipy.io import wavfile
 
 # 1. Read WAV file
-sample_rate, mono_audio = wavfile.read('test.wav')
+sample_rate, mono_audio = wavfile.read('wav/test.wav')
 # Convert back from 16-bit PCM to float [-1,1] for calculations
 mono_audio = mono_audio.astype(np.float32) / 32767.0
 
@@ -62,4 +62,4 @@ stereo_audio = np.column_stack((left_channel, right_channel))
 stereo_int16 = (stereo_audio * 32767).astype(np.int16)
 
 # 6. Save
-wavfile.write('stereo_test.wav', sample_rate, stereo_int16)
+wavfile.write('wav/stereo_test.wav', sample_rate, stereo_int16)
