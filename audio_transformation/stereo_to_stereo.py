@@ -1,18 +1,12 @@
 import numpy as np
-import soundfile as sf
+from utils.audio_io import read_wav_sf, write_wav_sf, split_stereo
 from utils.path import WAV_DIR
 
 # 1. Read WAV file
-audio_data, sample_rate = sf.read(WAV_DIR / 'cello.wav')
-
-if audio_data.ndim < 2:
-    raise ValueError("wav file needs to be stereo")
+sample_rate, audio_data = read_wav_sf(WAV_DIR / 'cello.wav')
 
 # Take left and right channels separately
-input_left = audio_data[:, 0]
-input_right = audio_data[:, 1]
-
-print(f"DEBUG - Min: {np.min(audio_data):.4f}, Max: {np.max(audio_data):.4f}")
+input_left, input_right = split_stereo(audio_data)
 
 # 2. Important parameters
 c = 343.0                           # Speed of sound (m/s)
@@ -49,5 +43,4 @@ right_channel[delay_samples_b : delay_samples_b + n_samples] += input_right * de
 stereo_audio = np.column_stack((left_channel, right_channel))
 
 # 6. Save
-stereo_audio_safe = np.clip(stereo_audio, -1.0, 1.0)
-sf.write(WAV_DIR / 'cello_stereo.wav', stereo_audio_safe, sample_rate, subtype='PCM_16')
+write_wav_sf(WAV_DIR / 'cello_stereo1.wav', sample_rate, stereo_audio)

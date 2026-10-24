@@ -1,19 +1,12 @@
 import numpy as np
-from scipy.io import wavfile
+from utils.audio_io import write_wav16b, read_wav16b
 from utils.path import WAV_DIR
 
 # 1. Read WAV file
-sample_rate, mono_audio = wavfile.read(WAV_DIR / 'test.wav')
-
-
-# Convert back from 16-bit PCM to float [-1,1] for calculations
-mono_audio = mono_audio.astype(np.float32) / 32767.0
+sample_rate, mono_audio = read_wav16b(WAV_DIR / 'test.wav')
 
 # 2. Important parameters
 c = 343.0                           # Speed of sound (m/s)
-# d = 0.50                            # Underlying distance between 2 sensors (m)
-# angle_deg = 45.0                    # Angle of source in degrees (0 = in front, 90 = right, -90 left)
-# angle_rad = np.radians(angle_deg)   # Angle converted to radians
 
 s1_pos = np.array([0.0, 0.0])       # sensor 1 position
 s2_pos = np.array([0.5, 0.0])       # sensor 2 position (0.5m difference x-as)
@@ -45,25 +38,8 @@ left_channel[left_delay:n_samples + left_delay] = mono_audio * decay_a
 right_channel[right_delay:n_samples + right_delay] = mono_audio * decay_b
 
 
-#if sample_delay > 0:
-#    # Source right (left delayed)
-#    right_channel[:n_samples] = mono_audio * decay_b
-#    left_channel[sample_delay:n_samples + sample_delay] = mono_audio * decay_a
-#elif sample_delay < 0:
-#    # Source left (right delayed)
-#    abs_delay = abs(sample_delay)
-#    left_channel[:n_samples] = mono_audio * decay_a
-#    right_channel[abs_delay:n_samples + abs_delay] = mono_audio * decay_b
-#else:
-#    left_channel[:n_samples] = mono_audio * decay_a
-#    right_channel[:n_samples] = mono_audio * decay_b
-
-
 # 5. 2D stereo-array
 stereo_audio = np.column_stack((left_channel, right_channel))
 
-# Convert to 16-bit PCM again (for WAV file)
-stereo_int16 = (stereo_audio * 32767).astype(np.int16)
-
 # 6. Save
-wavfile.write(WAV_DIR / 'stereo_test5.wav', sample_rate, stereo_int16)
+write_wav16b(WAV_DIR / 'stereo_test6.wav', sample_rate, stereo_audio)
