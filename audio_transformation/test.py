@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.io import wavfile
+from utils.path import WAV_DIR
 
 # sound settings
 sample_rate = 44100     # Standard sample rate (44100 samples per sec)
@@ -16,4 +17,4 @@ audio = np.sin(2 * np.pi * frequency * t)
 audio_int16 = (audio * 32767).astype(np.int16)
 
 # Save
-wavfile.write('wav/test.wav', sample_rate, audio_int16)
+wavfile.write(WAV_DIR / 'test.wav', sample_rate, audio_int16)

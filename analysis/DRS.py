@@ -1,9 +1,10 @@
 import numpy as np
 from scipy.io import wavfile
+from utils.path import WAV_DIR
 from drs.core import drs, reconstruction #, mirror, resonant_frequency
 
 # 1. Read WAV file
-sample_rate, stereo_data = wavfile.read('wav/cello_stereo.wav')
+sample_rate, stereo_data = wavfile.read(WAV_DIR / 'cello_stereo.wav')
 
 # 2. Make an audio matrix (channels, timestamps)
 
@@ -59,7 +60,7 @@ reconstructed_audio = np.column_stack((reconstructed_left[:min_len], reconstruct
 
 # 6. 16-bit PCM and save
 stereo_int16 = (reconstructed_audio * 32767).astype(np.int16)
-wavfile.write('wav/cello_drs_rec.wav', sample_rate, stereo_int16)
+wavfile.write(WAV_DIR / 'cello_drs_rec.wav', sample_rate, stereo_int16)
 
 #stereo_int16 = (reconstructed_total * 32767).astype(np.int16)
-#wavfile.write('wav/drs_reconstructed_together.wav', sample_rate, stereo_int16)
+#wavfile.write(WAV_DIR / 'drs_reconstructed_together.wav', sample_rate, stereo_int16)

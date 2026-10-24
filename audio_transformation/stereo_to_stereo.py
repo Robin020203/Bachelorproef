@@ -1,8 +1,9 @@
 import numpy as np
 import soundfile as sf
+from utils.path import WAV_DIR
 
 # 1. Read WAV file
-audio_data, sample_rate = sf.read('wav/cello.wav')
+audio_data, sample_rate = sf.read(WAV_DIR / 'cello.wav')
 
 if audio_data.ndim < 2:
     raise ValueError("wav file needs to be stereo")
@@ -49,4 +50,4 @@ stereo_audio = np.column_stack((left_channel, right_channel))
 
 # 6. Save
 stereo_audio_safe = np.clip(stereo_audio, -1.0, 1.0)
-sf.write('wav/cello_stereo.wav', stereo_audio_safe, sample_rate, subtype='PCM_16')
+sf.write(WAV_DIR / 'cello_stereo.wav', stereo_audio_safe, sample_rate, subtype='PCM_16')
