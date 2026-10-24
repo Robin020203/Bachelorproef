@@ -9,9 +9,9 @@ def decay(dist, exponent=1):
     # decay by 1/r (standard) or 1/r^2 (exponential)
     return 1.0 / dist**exponent
 
-def delay_samples():
+def delay_samples(dist, sample_rate, c=SpeedOfSound):
     # Delay for 1 distance (in samples)
-    pass
+    return int((dist / c) * sample_rate)
 
 def tdoa_samples(dist_1, dist_2, sample_rate, c=SpeedOfSound):
     # Time Difference of Arrival: Delay for difference between 2 distances (in samples)
