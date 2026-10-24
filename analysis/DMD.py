@@ -1,15 +1,13 @@
 import numpy as np
-from scipy.io import wavfile
+from utils.audio_io import write_wav16b, read_wav16b
 from utils.path import WAV_DIR
 from pydmd import HODMD
 
 # 1. Read WAV file
-sample_rate, stereo_data = wavfile.read(WAV_DIR / 'cello_stereo.wav')
+sample_rate, stereo_data = read_wav16b(WAV_DIR / 'cello_stereo.wav')
 
 # 2. Make an audio matrix (2 rows (channels), samples)
-
-audio_matrix = stereo_data.astype(np.float32) / 32767.0     # samples, channels(2)
-audio_matrix = audio_matrix.T                               # channels(2), samples
+audio_matrix = stereo_data.T
 
 # 3. Applying Higher Order DMD
 hodmd = HODMD(svd_rank=0, d=10)
@@ -22,5 +20,5 @@ print(hodmd.modes)
 
 # 4. Reconstruction of HODMD data
 reconstructed_data = hodmd.reconstructed_data.real
-reconstructed_stereo = (reconstructed_data.T * 32767).astype(np.int16)
-wavfile.write(WAV_DIR / 'cello_hodmd_rec.wav', sample_rate, reconstructed_stereo)
+reconstructed_stereo = reconstructed_data.T
+write_wav16b(WAV_DIR / 'cello_hodmd_rec1.wav', sample_rate, reconstructed_stereo)

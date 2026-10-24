@@ -11,6 +11,7 @@ def read_wav16b(path):
 def write_wav16b(path, sample_rate, audio):
     # Convert float32 to 16-bit PCM (for WAV file)
     audio_int16 = (audio * 32767).astype(np.int16)
+    # TODO: add clip function?
     wavfile.write(path, sample_rate, audio_int16)
 
 def read_wav_sf(path):
