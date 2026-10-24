@@ -1,5 +1,4 @@
 import numpy as np
-from torch.fx.passes.infra.pass_base import PassResult
 
 SpeedOfSound = 343.0 # m/s
 
