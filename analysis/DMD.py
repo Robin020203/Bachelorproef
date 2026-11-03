@@ -1,24 +1,52 @@
 import numpy as np
-from utils.audio_io import write_wav16b, read_wav16b
+from utils.audio_io import write_wav_sf, read_wav_sf
 from utils.path import WAV_DIR
 from pydmd import HODMD
 
+#help(HODMD)
+
 # 1. Read WAV file
-sample_rate, stereo_data = read_wav16b(WAV_DIR / 'cello_stereo.wav')
+sample_rate, stereo_data = read_wav_sf(WAV_DIR / 'stereo_test6.wav')
+
+#stereo_data = stereo_data[:44100] # 1 sec
 
 # 2. Make an audio matrix (2 rows (channels), samples)
 audio_matrix = stereo_data.T
 
 # 3. Applying Higher Order DMD
-hodmd = HODMD(svd_rank=0, d=10)
+hodmd = HODMD(svd_rank=0, svd_rank_extra=-1, d=10)
 hodmd.fit(audio_matrix)
 
+# DEBUG
 print(f"Calculated DMD modi (d): {len(hodmd.modes)}")
 print(f"Modes shape (d, svd_rank): {hodmd.modes.shape}")
 print(f"Dynamics shape (svd_rank, sample_rate): {hodmd.dynamics.shape}")
-print(hodmd.modes)
+#print(hodmd.modes)
+#print("L:",hodmd.modes[0])
+#print("R:",hodmd.modes[1])
+eigs = hodmd.eigs
+print("Eigenvalues:",eigs)
+print("Absolute eigenvalues:", np.abs(eigs))
+print("Frequency (Hz):", np.angle(eigs) * sample_rate / (2 * np.pi)) # f = ω/2π (* sample_rate)
+
+max_eig = np.argmax(np.abs(eigs)) # Max eigenvalue
+print("Max eig index:", max_eig)
+f = np.abs(np.angle(eigs[max_eig])) * sample_rate / (2 * np.pi) # Frequency of max eigenvalue
+print("Max frequency (Hz):", f)
+#print("L:",hodmd.modes[0,max_eig])
+#print("R:",hodmd.modes[1,max_eig])
+#print("L:",np.abs(hodmd.modes[0,max_eig]))
+#print("R:",np.abs(hodmd.modes[1,max_eig]))
+L, R = hodmd.modes[0, max_eig], hodmd.modes[1, max_eig]
+fase_shift = np.angle(R/L)
+sample_shift = (fase_shift * sample_rate) / (2 * np.pi * f)
+ratio = np.abs(R) / np.abs(L)
+print("Ratio: ", ratio)
+print("Sample shift:", sample_shift)
+
+
 
 # 4. Reconstruction of HODMD data
 reconstructed_data = hodmd.reconstructed_data.real
 reconstructed_stereo = reconstructed_data.T
-write_wav16b(WAV_DIR / 'cello_hodmd_rec1.wav', sample_rate, reconstructed_stereo)
+write_wav_sf(WAV_DIR / 'hodmd.wav', sample_rate, reconstructed_stereo)

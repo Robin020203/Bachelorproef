@@ -1,10 +1,10 @@
 import numpy as np
-from utils.audio_io import write_wav16b, read_wav16b, split_stereo
+from utils.audio_io import write_wav_sf, read_wav_sf, split_stereo
 from utils.path import WAV_DIR
 from drs.core import drs, reconstruction #, mirror, resonant_frequency
 
 # 1. Read WAV file
-sample_rate, stereo_data = read_wav16b(WAV_DIR / 'cello_stereo.wav')
+sample_rate, stereo_data = read_wav_sf(WAV_DIR / 'stereo_test6.wav')
 
 left_channel, right_channel = split_stereo(stereo_data)
 
@@ -53,6 +53,6 @@ min_len = min(len(reconstructed_left), len(reconstructed_right))
 reconstructed_audio = np.column_stack((reconstructed_left[:min_len], reconstructed_right[:min_len]))
 
 # 5. 16-bit PCM and save
-write_wav16b(WAV_DIR / 'cello_drs_rec1.wav', sample_rate, reconstructed_audio)
+write_wav_sf(WAV_DIR / 'drs.wav', sample_rate, reconstructed_audio)
 
 #write_wav16b(WAV_DIR / 'drs_reconstructed_together.wav', sample_rate, reconstructed_audio)
