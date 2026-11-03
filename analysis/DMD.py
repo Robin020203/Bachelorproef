@@ -44,8 +44,6 @@ ratio = np.abs(R) / np.abs(L)
 print("Ratio: ", ratio)
 print("Sample shift:", sample_shift)
 
-
-
 # 4. Reconstruction of HODMD data
 reconstructed_data = hodmd.reconstructed_data.real
 reconstructed_stereo = reconstructed_data.T
