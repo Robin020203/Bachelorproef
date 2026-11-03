@@ -37,7 +37,19 @@ print("Max frequency (Hz):", f)
 #print("R:",hodmd.modes[1,max_eig])
 #print("L:",np.abs(hodmd.modes[0,max_eig]))
 #print("R:",np.abs(hodmd.modes[1,max_eig]))
-L, R = hodmd.modes[0, max_eig], hodmd.modes[1, max_eig]
+
+#L, R = hodmd.modes[0, max_eig], hodmd.modes[1, max_eig]
+
+#dyn  = np.array([[1, 2, 3, 4]])          # (1 x 4)
+#data = np.array([[2.1, 3.9, 6.0, 8.1]])  # (1 x 4)
+#M = data @ np.linalg.pinv(dyn)
+#print("test M: ", M)
+
+# (2,8) = (2 x 88255) * (88255 x 8) because pinv = pseudo inverse
+# multiplying by pseudo inverse = best solution
+M = audio_matrix @ np.linalg.pinv(hodmd.dynamics)   # output: dim (2, 8)
+L, R = M[0, max_eig], M[1, max_eig]
+
 fase_shift = np.angle(R/L)
 sample_shift = (fase_shift * sample_rate) / (2 * np.pi * f)
 ratio = np.abs(R) / np.abs(L)
