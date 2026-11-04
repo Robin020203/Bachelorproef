@@ -51,7 +51,8 @@ M = audio_matrix @ np.linalg.pinv(hodmd.dynamics)   # output: dim (2, 8)
 L, R = M[0, max_eig], M[1, max_eig]
 
 fase_shift = np.angle(R/L)
-sample_shift = (fase_shift * sample_rate) / (2 * np.pi * f)
+#sample_shift = (fase_shift * sample_rate) / (2 * np.pi * f)
+sample_shift = fase_shift / np.angle(eigs[max_eig])
 ratio = np.abs(R) / np.abs(L)
 print("Ratio: ", ratio)
 print("Sample shift:", sample_shift)
