@@ -30,6 +30,7 @@ print("Absolute eigenvalues:", np.abs(eigs))
 print("Frequency (Hz):", np.angle(eigs) * sample_rate / (2 * np.pi)) # f = ω/2π (* sample_rate)
 
 max_eig = np.argmax(np.abs(eigs)) # Max eigenvalue
+# TODO: change argmax in every true signal (> 0.99) to calculate ratio and sample_shift
 print("Max eig index:", max_eig)
 f = np.abs(np.angle(eigs[max_eig])) * sample_rate / (2 * np.pi) # Frequency of max eigenvalue
 print("Max frequency (Hz):", f)
