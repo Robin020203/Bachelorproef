@@ -1,6 +1,9 @@
 import numpy as np
 import soundfile as sf
 from scipy.io import wavfile
+from scipy.signal import resample_poly
+from math import gcd
+
 
 def read_wav16b(path):
     sample_rate, audio = wavfile.read(path)
@@ -29,3 +32,12 @@ def split_stereo(audio):
     if audio.ndim < 2:
         raise ValueError("wav file needs to be stereo")
     return audio[:, 0], audio[:, 1]
+
+def resample(audio, from_rate, to_rate):
+    # convert audio from 'from_rate' to 'to_rate'
+    if from_rate == to_rate:
+        return audio, to_rate
+    else:
+        g = gcd(from_rate, to_rate)
+        audio2 = resample_poly(audio, to_rate // g, from_rate // g) # up, down
+        return audio2, to_rate
