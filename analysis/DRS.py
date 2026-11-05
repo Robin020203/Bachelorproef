@@ -19,12 +19,15 @@ drs_right = drs(right_channel, window_length)
 # TODO: iterate over every slice, and put this in utils-function
 slice_left, slice_right = drs_left[0], drs_right[0]
 
+# Matrices (forward left/right, reverse left/right)
 ds_zs_l, ds_zs_r = slice_left[0], slice_right[0]
-ds_zl_rev_l, ds_zs_rev_r = drs_left[1], drs_right[1]
+ds_zl_rev_l, ds_zs_rev_r = slice_left[1], slice_right[1]
 
+# Lists of amplitudes and corresponding poles (real, imag)
 amplitudes_l, poles_l = np.unstack(ds_zs_l)
 amplitudes_r, poles_r = np.unstack(ds_zs_r)
 
+# Lists of frequencies (real, imag)
 frequencies_l, frequencies_r = resonant_frequencies(poles_l, sample_rate), resonant_frequencies(poles_r, sample_rate)
 #print(frequencies_l, frequencies_r)
 #np.real(freq)
@@ -37,7 +40,7 @@ frequencies_l, frequencies_r = resonant_frequencies(poles_l, sample_rate), reson
 
 reconstructed_left_list = []
 for slice_item in drs_left:
-    # Returns 4 elements (error)
+    # Returns 4 elements (error) (SHOULD RETURN 2 MATRICES PER SLICE?)
     ds_zs_fwd, ds_zs_rev, _, _ = slice_item
     rec_slice = reconstruction(ds_zs_fwd, ds_zs_rev, window_length)
     reconstructed_left_list.append(rec_slice)
@@ -46,7 +49,7 @@ reconstructed_left = np.concatenate(reconstructed_left_list)
 
 reconstructed_right_list = []
 for slice_item in drs_right:
-    # Returns 4 elements (error)
+    # Returns 4 elements (error) (SHOULD RETURN 2 MATRICES PER SLICE?)
     ds_zs_fwd, ds_zs_rev, _, _ = slice_item
     rec_slice = reconstruction(ds_zs_fwd, ds_zs_rev, window_length)
     reconstructed_right_list.append(rec_slice)
