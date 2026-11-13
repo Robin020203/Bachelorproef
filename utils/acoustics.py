@@ -35,3 +35,33 @@ def stereo_ratio_and_shift(M, eigs, i):
     sample_shift = fase_shift / np.angle(eigs[i])
     ratio = np.abs(R) / np.abs(L)
     return ratio, sample_shift
+
+def group_by_ratio(real_tones_array, ratios, relative_tol=0.05):
+    # Group ratios based on tolerance
+    ordered_tones = real_tones_array[np.argsort(ratios[real_tones_array])]
+    groups = []
+    for k in ordered_tones:
+
+        if groups:
+            first = groups[-1][0]
+            # Boolean t/f
+            same_group = (ratios[k] - ratios[first]) / ratios[first] < relative_tol
+        else:
+            same_group = False # DEBUG (first tone has no group)
+
+        if same_group:
+            groups[-1].append(k)
+        else:
+            groups.append([k])
+    return groups
+
+def group_members(group, ratios, eigs, tol=1e-6):
+    lo, hi = ratios[group].min(), ratios[group].max()  # group reach
+    # All modes with ratio in reach of real_values (also negative f)
+    members = []
+    for i in range(len(eigs)):
+        # boolean t/f
+        in_range = lo * (1 - tol) <= ratios[i] <= hi * (1 + tol)
+        if in_range and np.abs(eigs[i]) > 0.999:
+            members.append(i)
+    return np.array(members)
