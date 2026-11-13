@@ -4,7 +4,8 @@ from utils.path import WAV_DIR
 from utils.acoustics import distance, decay, tdoa_samples, delay_and_decay_signal
 
 # 1. Read WAV file
-sample_rate, audio = read_wav16b(WAV_DIR / 'test.wav')
+#sample_rate, audio = read_wav16b(WAV_DIR / 'test.wav')
+sample_rate, audio = read_wav16b(WAV_DIR / 'Drum.wav')
 
 # 2. Positions (m)
 s1_pos = [0.0, 0.0]
@@ -33,4 +34,4 @@ right_channel = delay_and_decay_signal(audio, right_delay, decay_b, total_length
 stereo_audio = np.column_stack((left_channel, right_channel))
 
 # 6. Save
-write_wav16b(WAV_DIR / 'stereo_test6.wav', sample_rate, stereo_audio)
+write_wav16b(WAV_DIR / 'Drum_stereo.wav', sample_rate, stereo_audio)

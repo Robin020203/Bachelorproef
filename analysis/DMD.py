@@ -3,11 +3,12 @@ from utils.audio_io import write_wav_sf, read_wav_sf
 from utils.path import WAV_DIR
 from pydmd import HODMD
 
-#help(HODMD)
+help(HODMD)
 
 # 1. Read WAV file
 #sample_rate, stereo_data = read_wav_sf(WAV_DIR / 'stereo_test6.wav')
-sample_rate, stereo_data = read_wav_sf(WAV_DIR / '2sine.wav')
+#sample_rate, stereo_data = read_wav_sf(WAV_DIR / '2sine.wav')
+sample_rate, stereo_data = read_wav_sf(WAV_DIR / 'DRUM_AUDACITY.wav')
 
 #stereo_data = stereo_data[:44100] # 1 sec
 
@@ -71,6 +72,8 @@ for i in range(len(eigs)):
         L, R = M[0, i], M[1, i]
         f = frequencies[i]
         fase_shift = np.angle(R/L)
+        print("DEBUG fase_shift:", fase_shift)
+        print("DEBUG angle eigenvalue:", np.angle(eigs[i]))
         #sample_shift = (fase_shift * sample_rate) / (2 * np.pi * f)
         sample_shift = fase_shift / np.angle(eigs[i])
         ratio = np.abs(R) / np.abs(L)
@@ -79,6 +82,7 @@ for i in range(len(eigs)):
         print("Ratio: ", ratio)
 
 # 6. Reconstruction of HODMD data
+print("HODMD output data: ", hodmd.reconstructed_data.real)
 reconstructed_data = hodmd.reconstructed_data.real
 reconstructed_stereo = reconstructed_data.T
-write_wav_sf(WAV_DIR / 'hodmd.wav', sample_rate, reconstructed_stereo)
+write_wav_sf(WAV_DIR / 'Drum_hodmd.wav', sample_rate, reconstructed_stereo)

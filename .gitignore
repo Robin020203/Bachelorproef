@@ -1,0 +1,5 @@
+drs/
+wav/
+*.wav
+.DS_Store
+.idea/
