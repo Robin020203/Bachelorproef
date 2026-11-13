@@ -2,4 +2,9 @@ drs/
 wav/
 *.wav
 .DS_Store
+!2sine.wav
+!test.wav
+!Drum.wav
+!Drum_stereo
+!DRUM_AUDACITY
 .idea/
