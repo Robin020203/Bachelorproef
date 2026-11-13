@@ -22,3 +22,16 @@ def delay_and_decay_signal(signal, delay, decay, total_length):
     channel = np.zeros(total_length)
     channel[delay:n_samples + delay] = signal * decay
     return channel
+
+def eig_to_frequency(eigs, sample_rate):
+    # Calculate frequencies from eigs: f = ω/2π (* sample_rate)
+    return np.angle(eigs) * sample_rate / (2 * np.pi)
+
+def stereo_ratio_and_shift(M, eigs, i):
+    # Return ratio and sample shift for eigenvalue i
+    L, R = M[0, i], M[1, i]
+    fase_shift = np.angle(R / L)
+    # sample_shift = (fase_shift * sample_rate) / (2 * np.pi * f)
+    sample_shift = fase_shift / np.angle(eigs[i])
+    ratio = np.abs(R) / np.abs(L)
+    return ratio, sample_shift

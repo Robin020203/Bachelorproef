@@ -2,6 +2,7 @@ import numpy as np
 from pydmd import HODMD
 from utils.audio_io import read_wav_sf, write_wav_sf
 from utils.path import WAV_DIR
+from utils.acoustics import eig_to_frequency, stereo_ratio_and_shift
 
 # 1. Read WAV file
 input_file = 'DRUM_AUDACITY.wav'
@@ -13,31 +14,21 @@ hodmd = HODMD(svd_rank=0, svd_rank_extra=-1, d=50) # higher dimension
 hodmd.fit(audio_matrix)
 
 eigs = hodmd.eigs
-print("Absolute eigenvalues:", np.abs(eigs))
-frequencies = np.angle(eigs) * sample_rate / (2 * np.pi) # f = ω/2π (* sample_rate)
+frequencies = eig_to_frequency(eigs, sample_rate)
 
 M = audio_matrix @ np.linalg.pinv(hodmd.dynamics)
-#L, R = M[0], M[1]
-ratios = np.abs(M[1]) / np.abs(M[0])
-
-print("Ratios :", ratios)
+ratios, _ = stereo_ratio_and_shift(M, eigs, np.arange(len(eigs)))  # for all modes
+#print("Ratios :", ratios)
 
 real_tones = []
 for i in range(len(eigs)):
     if np.abs(eigs[i]) > 0.999 and frequencies[i] > 0: # every real tone with positive frequency
         real_tones.append(i)
-        # M already defined above
-        L, R = M[0, i], M[1, i]
+        ratio, sample_shift = stereo_ratio_and_shift(M, eigs, i)
         f = frequencies[i]
-        fase_shift = np.angle(R/L)
-        #print("DEBUG fase_shift:", fase_shift)
-        #print("DEBUG angle eigenvalue:", np.angle(eigs[i]))
-        #sample_shift = (fase_shift * sample_rate) / (2 * np.pi * f)
-        sample_shift = fase_shift / np.angle(eigs[i])
-        ratio = np.abs(R) / np.abs(L)
-        print("Frequency (Hz):", f)
+        #print("Frequency (Hz):", f)
         #print("Sample shift:", sample_shift)
-        print("Ratio: ", ratio)
+        #print("Ratio: ", ratio)
 real_tones = np.array(real_tones)
 ordered_tones = real_tones[np.argsort(ratios[real_tones])]
 
@@ -64,12 +55,17 @@ base_name = input_file.rsplit('.', 1)[0]
 
 for g, group in enumerate(groups):
     center = np.median(ratios[group])
+    lo, hi = ratios[group].min(), ratios[group].max()   # group reach
+    tol = 1e-6                                          # small error
 
-    # All modes (+f and -f) with a ratio close to the center and strong enough
-    members = np.where(
-        (np.abs(ratios - center) / center < 0.05) &
-        (np.abs(eigs) > 0.999)
-    )[0]
+    # All modes with ratio in reach of real_values (also negative f)
+    members = []
+    for i in range(len(eigs)):
+        in_range = lo * (1 - tol) <= ratios[i] <= hi * (1 + tol)
+        strong = np.abs(eigs[i]) > 0.999  # real tone
+        if in_range and strong:
+            members.append(i)
+    members = np.array(members)
 
     print(f"\nSource {g}: ratio ≈ {center:.3f}")
     print("  anchor tones (Hz):", np.round(frequencies[group], 1))
