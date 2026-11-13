@@ -1,10 +1,13 @@
 drs/
-wav/
-*.wav
 .DS_Store
-!2sine.wav
-!test.wav
-!Drum.wav
-!Drum_stereo
-!DRUM_AUDACITY
 .idea/
+
+# ignore all wav-files in wav-map...
+wav/*.wav
+
+# except:
+!wav/2sine.wav
+!wav/test.wav
+!wav/Drum.wav
+!wav/Drum_stereo.wav
+!wav/DRUM_AUDACITY.wav
