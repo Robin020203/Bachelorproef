@@ -41,6 +41,7 @@ print("SOLUTION 2: L and R from dmd.modes using vectors")
 print("------------------------------------------------------------------")
 
 modes = hodmd.modes
+half = modes.shape[0] // 2 #50
 for i in range(len(eigs)):
     if np.abs(eigs[i]) > 0.999 and frequencies[i] > 0:
         L = []
@@ -50,6 +51,10 @@ for i in range(len(eigs)):
                 L.append(modes[row, i])
             else:
                 R.append(modes[row, i])
+        #    if row < half:
+        #        L.append(modes[row, i])
+        #    else:
+        #        R.append(modes[row, i])
         L, R = np.array(L), np.array(R) #complex vectors
 
         fase_shift = np.angle(np.vdot(L, R)) # Dot product between 'complex conjugate of L' and 'R'
