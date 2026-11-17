@@ -71,3 +71,11 @@ for i in range(len(eigs)):
 #R
 #L
 #R
+#...
+
+# L
+# L
+# ...
+# R
+# R
+# ...
